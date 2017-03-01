@@ -195,6 +195,11 @@ int main(void) {
 
 	unsigned int phase = 0;
 
+	unsigned int cakePortA = 0;
+	unsigned int cakePortB = 5;
+
+	unsigned long cakeCounter = 0;
+
 	while(true) {
 		// Check whether we need to initiate a CPLD update
 		if (start_cpld_update)
@@ -208,6 +213,23 @@ int main(void) {
 
 		start_streaming_on_hw_sync();
 
+		cakeCounter++;
+		if(cakeCounter > 7500000) {
+			if(cakeCounter % 400 == 0) {
+				if(transceiver_mode() != TRANSCEIVER_MODE_OFF) {
+					cakePortA++;
+					if(cakePortA > 3) {
+						cakePortA = 0;
+					}
+					operacake_set_ports(28, cakePortA, cakePortB);
+				}
+			}
+		} 
+		if(cakeCounter == 10000000) {
+			operacake_set_ports(28, 0, cakePortB);
+			cakeCounter = 0;
+		}
+		
 		// Set up IN transfer of buffer 0.
 		if ( usb_bulk_buffer_offset >= 16384
 		     && phase == 1
