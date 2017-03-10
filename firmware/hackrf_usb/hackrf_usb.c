@@ -45,6 +45,8 @@
 #include "usb_api_sweep.h"
 #include "usb_api_transceiver.h"
 #include "usb_bulk_buffer.h"
+
+#include <libopencm3/lpc43xx/ritimer.h>
  
 #include "hackrf-ui.h"
 
@@ -162,13 +164,14 @@ int main(void) {
 	pin_setup();
 	enable_1v8_power();
 #if (defined HACKRF_ONE || defined RAD1O)
-	enable_rf_power();
+//	enable_rf_power();
 
 	/* Let the voltage stabilize */
 	delay(1000000);
 #endif
 	cpu_clock_init();
 
+/*
 	usb_set_descriptor_by_serial_number();
 
 	usb_set_configuration_changed_cb(usb_configuration_changed);
@@ -191,6 +194,7 @@ int main(void) {
 	usb_run(&usb_device);
 	
 	rf_path_init(&rf_path);
+*/
 	operacake_init();
 
 	unsigned int phase = 0;
@@ -198,38 +202,70 @@ int main(void) {
 	unsigned int cakePortA = 0;
 	unsigned int cakePortB = 5;
 
+
+	//**********************************************************
+	//CCU1_CLK_M4_RITIMER_CFG
+	//NVIC_EnableIRQ(RITIMER_IRQn);
+	//**********************************************************
+
+	operacake_set_ports(28, 2, 6);
+
+	operacake_xover(false);
+	operacake_enable_gpio(28);
+
+	operacake_porta(false, false);
+
 	unsigned long cakeCounter = 0;
+	unsigned long cakeCounter2 = 0;
+	unsigned long antennaPosition = 0;
+
+	led_on(LED3);
 
 	while(true) {
-		// Check whether we need to initiate a CPLD update
-		if (start_cpld_update)
-			cpld_update();
-
-		// Check whether we need to initiate sweep mode
-		if (start_sweep_mode) {
-			start_sweep_mode = false;
-			sweep_mode();
+		// 3.97kHz: 2000
+		// 5.275kHz: 1500
+		// 6.581kHz: 1200
+		// 7.143kHz: 1100
+		// 7.879kHz: 1000
+		// 9.816kHz: 800
+		// 11.16kHz: 700
+		// 13kHz: 600
+		// 15.52kHz: 500
+		// 19.23kHz: 400
+		// 25.25kHz: 300 // jittery
+		// 37.15kHz: 200 // jittery
+		// 69.05kHz: 100 // jittery
+		// 121.6kHz: 50 // jittery
+		for(int i = 0; i < 825; i++) {
 		}
 
-		start_streaming_on_hw_sync();
+		//led_toggle(LED3);
 
-		cakeCounter++;
-		if(cakeCounter > 7500000) {
-			if(cakeCounter % 400 == 0) {
-				if(transceiver_mode() != TRANSCEIVER_MODE_OFF) {
-					cakePortA++;
-					if(cakePortA > 3) {
-						cakePortA = 0;
-					}
-					operacake_set_ports(28, cakePortA, cakePortB);
-				}
-			}
-		} 
-		if(cakeCounter == 10000000) {
-			operacake_set_ports(28, 0, cakePortB);
-			cakeCounter = 0;
+		// 3_8 high on to connect side to port on its side
+		// 3_12 3_13
+		// low  low   PA1
+		// high low   PA2
+		// low  high  PA3
+		// high high  PA4
+		antennaPosition++;
+		antennaPosition &= 0b11;
+
+		switch(antennaPosition) {
+			case 0:
+				operacake_porta(false, false);
+				break;
+			case 1:
+				operacake_porta(false, true);
+				break;
+			case 2:
+				operacake_porta(true, false);
+				break;
+			case 3:
+				operacake_porta(true, true);
+				break;
 		}
 		
+/*
 		// Set up IN transfer of buffer 0.
 		if ( usb_bulk_buffer_offset >= 16384
 		     && phase == 1
@@ -257,6 +293,7 @@ int main(void) {
 			);
 			phase = 1;
 		}
+*/
 	}
 
 	return 0;

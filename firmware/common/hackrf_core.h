@@ -293,6 +293,9 @@ void led_on(const led_t led);
 void led_off(const led_t led);
 void led_toggle(const led_t led);
 
+void operacake_xover(bool enable);
+void operacake_porta(bool left, bool right);
+
 void hw_sync_syn();
 void hw_sync_stop();
 void hw_sync_ack();

@@ -52,6 +52,9 @@
 #define OPERACAKE_REG_POLARITY 0x02
 #define OPERACAKE_REG_CONFIG   0x03
 
+#define OPERACAKE_GPIO_OUTPUT (OPERACAKE_GPIO_EN | OPERACAKE_SAMESIDE \
+								  | OPERACAKE_PORT_A1 | OPERACAKE_PORT_B1 \
+								  | OPERACAKE_EN_LEDS)
 #define OPERACAKE_DEFAULT_OUTPUT (OPERACAKE_GPIO_DISABLE | OPERACAKE_SAMESIDE \
 								  | OPERACAKE_PORT_A1 | OPERACAKE_PORT_B1 \
 								  | OPERACAKE_EN_LEDS)
@@ -145,3 +148,16 @@ uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 	return 0;
 }
 
+uint8_t operacake_enable_gpio(uint8_t address) {
+	operacake_write_reg(oc_bus, address, OPERACAKE_REG_CONFIG, 0x7F);
+	//operacake_write_reg(oc_bus, address, OPERACAKE_REG_, OPERACAKE_GPIO_DISABLE);
+	//operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, );
+
+	//operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, OPERACAKE_GPIO_DISABLE);
+	operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, OPERACAKE_GPIO_OUTPUT);
+
+//	uint8_t reg = OPERACAKE_GPIO_EN | OPERACAKE_SAMESIDE | OPERACAKE_EN_LEDS;
+//	operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, reg);
+
+	return 0;
+}

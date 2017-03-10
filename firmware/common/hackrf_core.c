@@ -55,6 +55,11 @@ static struct gpio_t gpio_led[] = {
 #endif
 };
 
+static struct gpio_t gpio_xover = GPIO(3, 8);
+static struct gpio_t gpio_u2_ctrl0 = GPIO(3, 12);
+static struct gpio_t gpio_u2_ctrl1 = GPIO(3, 13);
+
+
 static struct gpio_t gpio_1v8_enable		= GPIO(3,  6);
 
 /* MAX2837 GPIO (XCVR_CTL) PinMux */
@@ -76,8 +81,8 @@ static struct gpio_t gpio_max5864_select	= GPIO(2,  7);
 
 static struct gpio_t gpio_sync_in_a		= GPIO(3,  10);
 static struct gpio_t gpio_sync_in_b		= GPIO(3,  11);
-static struct gpio_t gpio_sync_out_a		= GPIO(3, 8);
-static struct gpio_t gpio_sync_out_b		= GPIO(3, 9);
+static struct gpio_t gpio_sync_out_a		= GPIO(3, 14);
+static struct gpio_t gpio_sync_out_b		= GPIO(3, 15);
 
 /* RF supply (VAA) control */
 #ifdef HACKRF_ONE
@@ -865,6 +870,12 @@ void pin_setup(void) {
 
 	gpio_output(&gpio_sync_out_a);
 	gpio_output(&gpio_sync_out_b);
+
+	/* OperaCake */
+	gpio_output(&gpio_xover);
+	gpio_output(&gpio_u2_ctrl0);
+	gpio_output(&gpio_u2_ctrl1);
+
 #endif
 
 #ifdef RAD1O
@@ -933,6 +944,27 @@ void led_on(const led_t led) {
 
 void led_off(const led_t led) {
 	gpio_clear(&gpio_led[led]);
+}
+
+void operacake_xover(bool enable) {
+	if(enable) {
+		gpio_clear(&gpio_xover);
+	} else {
+		gpio_set(&gpio_xover);
+	}
+}
+
+void operacake_porta(bool left, bool right) {
+	if(left) {
+		gpio_set(&gpio_u2_ctrl0);
+	} else {
+		gpio_clear(&gpio_u2_ctrl0);
+	}
+	if(right) {
+		gpio_set(&gpio_u2_ctrl1);
+	} else {
+		gpio_clear(&gpio_u2_ctrl1);
+	}
 }
 
 void led_toggle(const led_t led) {
