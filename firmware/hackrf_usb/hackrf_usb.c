@@ -194,13 +194,16 @@ int main(void) {
 	usb_run(&usb_device);
 	
 	rf_path_init(&rf_path);
-*/
-	operacake_init();
-
 	unsigned int phase = 0;
-
 	unsigned int cakePortA = 0;
 	unsigned int cakePortB = 5;
+
+*/
+	led_on(LED1);
+
+	operacake_init();
+
+	led_on(LED2);
 
 
 	//**********************************************************
@@ -208,16 +211,16 @@ int main(void) {
 	//NVIC_EnableIRQ(RITIMER_IRQn);
 	//**********************************************************
 
-	operacake_set_ports(28, 2, 6);
+	//operacake_set_ports(28, 2, 6);
 
 	operacake_xover(false);
 	operacake_enable_gpio(28);
 
-	operacake_porta(false, false);
+	led_on(LED4);
 
-	unsigned long cakeCounter = 0;
-	unsigned long cakeCounter2 = 0;
-	unsigned long antennaPosition = 0;
+	operacake_porta(0b11);
+
+	unsigned int antennaPosition = 0;
 
 	led_on(LED3);
 
@@ -236,7 +239,7 @@ int main(void) {
 		// 37.15kHz: 200 // jittery
 		// 69.05kHz: 100 // jittery
 		// 121.6kHz: 50 // jittery
-		for(int i = 0; i < 825; i++) {
+		for(int i = 0; i < 450; i++) {
 		}
 
 		//led_toggle(LED3);
@@ -247,23 +250,16 @@ int main(void) {
 		// high low   PA2
 		// low  high  PA3
 		// high high  PA4
-		antennaPosition++;
-		antennaPosition &= 0b11;
+//		antennaPosition &= 0b11;
 
-		switch(antennaPosition) {
-			case 0:
-				operacake_porta(false, false);
-				break;
-			case 1:
-				operacake_porta(false, true);
-				break;
-			case 2:
-				operacake_porta(true, false);
-				break;
-			case 3:
-				operacake_porta(true, true);
-				break;
+		operacake_porta(antennaPosition & 0b11);
+
+		antennaPosition++;
+/*
+		if(antennaPosition > 0xffff) {
+			antennaPosition = 0;
 		}
+*/
 		
 /*
 		// Set up IN transfer of buffer 0.

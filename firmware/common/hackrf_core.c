@@ -954,13 +954,13 @@ void operacake_xover(bool enable) {
 	}
 }
 
-void operacake_porta(bool left, bool right) {
-	if(left) {
+void operacake_porta(short portAbits) {
+	if(portAbits & 0b10) {
 		gpio_set(&gpio_u2_ctrl0);
 	} else {
 		gpio_clear(&gpio_u2_ctrl0);
 	}
-	if(right) {
+	if(portAbits & 0b01) {
 		gpio_set(&gpio_u2_ctrl1);
 	} else {
 		gpio_clear(&gpio_u2_ctrl1);
