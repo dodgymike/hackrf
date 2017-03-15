@@ -239,7 +239,8 @@ int main(void) {
 		// 37.15kHz: 200 // jittery
 		// 69.05kHz: 100 // jittery
 		// 121.6kHz: 50 // jittery
-		for(int i = 0; i < 450; i++) {
+		//for(int i = 0; i < 1750; i++) {
+		for(int i = 0; i < 1661; i++) {
 		}
 
 		//led_toggle(LED3);
@@ -252,7 +253,7 @@ int main(void) {
 		// high high  PA4
 //		antennaPosition &= 0b11;
 
-		operacake_porta(antennaPosition & 0b11);
+		//operacake_porta(antennaPosition & 0b11);
 
 		antennaPosition++;
 /*

@@ -955,6 +955,14 @@ void operacake_xover(bool enable) {
 }
 
 void operacake_porta(short portAbits) {
+	short PB = 0;
+
+	gpio_port_t *port = gpio_u2_ctrl0.port;
+	port->mask = ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15));
+	//port->mpin = ((portAbits & 0x3) << 12) | ((PB & 0x3) << 14);
+	port->mpin = ((portAbits & 0x3) << 12);
+
+/*
 	if(portAbits & 0b10) {
 		gpio_set(&gpio_u2_ctrl0);
 	} else {
@@ -965,6 +973,7 @@ void operacake_porta(short portAbits) {
 	} else {
 		gpio_clear(&gpio_u2_ctrl1);
 	}
+*/
 }
 
 void led_toggle(const led_t led) {
