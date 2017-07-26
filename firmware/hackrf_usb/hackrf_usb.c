@@ -240,7 +240,8 @@ int main(void) {
 		// 69.05kHz: 100 // jittery
 		// 121.6kHz: 50 // jittery
 		//for(int i = 0; i < 1750; i++) {
-		for(int i = 0; i < 1661; i++) {
+		//for(int i = 0; i < 1661; i++) {
+		for(int i = 0; i < 600; i++) {
 		}
 
 		//led_toggle(LED3);
@@ -253,14 +254,12 @@ int main(void) {
 		// high high  PA4
 //		antennaPosition &= 0b11;
 
-		//operacake_porta(antennaPosition & 0b11);
+		operacake_portb(antennaPosition & 0b11);
 
 		antennaPosition++;
-/*
 		if(antennaPosition > 0xffff) {
 			antennaPosition = 0;
 		}
-*/
 		
 /*
 		// Set up IN transfer of buffer 0.

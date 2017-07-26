@@ -58,6 +58,8 @@ static struct gpio_t gpio_led[] = {
 static struct gpio_t gpio_xover = GPIO(3, 8);
 static struct gpio_t gpio_u2_ctrl0 = GPIO(3, 12);
 static struct gpio_t gpio_u2_ctrl1 = GPIO(3, 13);
+static struct gpio_t gpio_u3_ctrl0 = GPIO(3, 14);
+static struct gpio_t gpio_u3_ctrl1 = GPIO(3, 15);
 
 
 static struct gpio_t gpio_1v8_enable		= GPIO(3,  6);
@@ -875,6 +877,8 @@ void pin_setup(void) {
 	gpio_output(&gpio_xover);
 	gpio_output(&gpio_u2_ctrl0);
 	gpio_output(&gpio_u2_ctrl1);
+	gpio_output(&gpio_u3_ctrl0);
+	gpio_output(&gpio_u3_ctrl1);
 
 #endif
 
@@ -961,19 +965,12 @@ void operacake_porta(short portAbits) {
 	port->mask = ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15));
 	//port->mpin = ((portAbits & 0x3) << 12) | ((PB & 0x3) << 14);
 	port->mpin = ((portAbits & 0x3) << 12);
+}
 
-/*
-	if(portAbits & 0b10) {
-		gpio_set(&gpio_u2_ctrl0);
-	} else {
-		gpio_clear(&gpio_u2_ctrl0);
-	}
-	if(portAbits & 0b01) {
-		gpio_set(&gpio_u2_ctrl1);
-	} else {
-		gpio_clear(&gpio_u2_ctrl1);
-	}
-*/
+void operacake_portb(short portBbits) {
+	gpio_port_t *port = gpio_u3_ctrl0.port;
+	port->mask = ~((1 << 14) | (1 << 15));
+	port->mpin = ((portBbits & 0x3) << 14);
 }
 
 void led_toggle(const led_t led) {
